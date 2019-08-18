@@ -3,22 +3,33 @@ import "./App.css";
 import axios from 'axios';
 import SmurfForm from './SmurfForm.js';
 import SmurfList from './SmurfList.js';
+import { AppContext } from '../contexts/AppContext.js';
 
 const App = () => {
-  const [smurfs, setSmurfs] = useState();
+  console.log('appContext', AppContext);
+
+  const [smurfs, setSmurfs] = useState([]);
   useEffect(() => {
     axios.get('http://localhost:3333/smurfs')
-      .then(res => setSmurfs(res.data))
+      .then(res => {
+        setSmurfs(res.data)
+      })
       .catch(error => console.log(error))
   }, [])
-
   console.log('smurfs', smurfs);
 
+
+  const addSmurf = smurfObj => {
+    setSmurfs([...smurfs, smurfObj])
+  }
+
   return (
-    <div className="App">
-      <SmurfForm />
-      {/* <SmurfList smurfs={smurfs} /> */}
-    </div>
+    <AppContext.Provider value={smurfs}>
+      <div className="App">
+        <SmurfForm addSmurf={addSmurf}/>
+        <SmurfList smurfs={smurfs} />
+      </div>
+    </AppContext.Provider>
   );
 }
 

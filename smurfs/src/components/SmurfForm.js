@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './SmurfForm.css';
 import axios from 'axios';
 
-const SmurfForm = () => {
-    const [smurf, setSmurf] = useState({name: '', age: '', height: '', id: ''});
+const SmurfForm = ({ addSmurf }) => {
+    const [smurf, setSmurf] = useState({name: '', age: [], height: '', id: ''});
 
     const handleChange = event => {
         setSmurf({...smurf, [event.target.name]: event.target.value});
@@ -12,8 +12,15 @@ const SmurfForm = () => {
     const handleSubmit = event => {
         event.preventDefault();
         axios.post('http://localhost:3333/smurfs', smurf)
-            .then(res => console.log('post', res))
-            .catch(error => console.log(error))
+            .then(res => {
+                console.log('post', res);
+                res.data.forEach(smurfObj => {
+                    addSmurf(smurfObj);
+                })
+            })
+            .catch(error => console.log('post error', error))
+            
+        setSmurf({...smurf, name: '', age: [], height: '', id: ''});
     }
 
     console.log('form', smurf);
